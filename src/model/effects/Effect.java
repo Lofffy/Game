@@ -1,5 +1,7 @@
 package model.effects;
 
+import model.world.Champion;
+
 abstract public class Effect implements Cloneable {
 
 	private String name;
@@ -28,6 +30,8 @@ abstract public class Effect implements Cloneable {
 		return type;
 	}
 
+	Disarm s = new Disarm(4);
+
 
 	@Override
 	public Effect clone() {
@@ -38,4 +42,7 @@ abstract public class Effect implements Cloneable {
 			throw new AssertionError();
 		}
 	}
+	abstract void apply(Champion c);
+	abstract void remove(Champion c);
+
 }
