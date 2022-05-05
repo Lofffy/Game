@@ -18,8 +18,8 @@ public class Embrace extends Effect {
 
 	@Override
 	void remove(Champion c) {
-		double dom = 100*1.2 ;
-		double nom = 1.2*120 ;
+		double dom = 100*1.2;
+		double nom = 1.2*120;
 		c.setSpeed((int)((c.getSpeed()*dom)/nom));
 		c.setAttackDamage((int)((c.getAttackDamage()*dom)/nom));
 	}

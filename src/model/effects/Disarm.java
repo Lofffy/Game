@@ -43,6 +43,6 @@ public class Disarm extends Effect {
 
 	}
 	public static void main(String[] args) {
-		System.out.println("Fetch ya omar");
+
 	}
 }

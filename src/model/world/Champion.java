@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import model.abilities.Ability;
 import model.effects.Effect;
 
-public class Champion {
+public abstract class Champion implements Comparable {
 
 	private String name;
 	private int mana;

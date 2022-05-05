@@ -1,6 +1,10 @@
 package model.abilities;
 
 import model.effects.Effect;
+import model.world.Damageable;
+
+import java.lang.annotation.Target;
+import java.util.ArrayList;
 
 public class CrowdControlAbility extends Ability {
 
@@ -16,4 +20,8 @@ public class CrowdControlAbility extends Ability {
 		return effect;
 	}
 
+	@Override
+	void execute(ArrayList<Damageable> targets) {
+
+	}
 }
