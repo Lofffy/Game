@@ -26,4 +26,8 @@ public class Dodge extends Effect {
 		double nom = 1.05*105;
 		c.setSpeed((int)(dom/nom));
 	}
+
+	public static void main(String[] args) {
+		int z = 0 ;
+	}
 }
