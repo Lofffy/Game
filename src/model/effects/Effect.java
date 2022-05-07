@@ -30,16 +30,20 @@ abstract public class Effect implements Cloneable {
 		return type;
 	}
 
-	Disarm s = new Disarm(4);
-
-
 	@Override
 	public Effect clone() {
 		try {
-			Effect clone = (Effect) super.clone();
-			return clone;
+			return (Effect) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new AssertionError();
+		}
+	}
+	public static void RemoveEffect(String name, Champion c){
+		for (int i = 0; i < c.getAppliedEffects().size(); i++) {
+			if(c.getAppliedEffects().get(i).getName().equals(name)) {
+				c.getAppliedEffects().remove(i);
+				break;
+			}
 		}
 	}
 	abstract void apply(Champion c);

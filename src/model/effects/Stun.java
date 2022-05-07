@@ -11,11 +11,13 @@ public class Stun extends Effect {
 
 	@Override
 	void apply(Champion c) {
+		c.getAppliedEffects().add(clone());
 		c.setCondition(Condition.INACTIVE);
 	}
 
 	@Override
 	void remove(Champion c) {
+		RemoveEffect("Stun",c);
 		c.setCondition(Condition.ACTIVE);
 
 	}

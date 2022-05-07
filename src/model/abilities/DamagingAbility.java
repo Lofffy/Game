@@ -24,6 +24,6 @@ public class DamagingAbility extends Ability {
 
 	@Override
 	void execute(ArrayList<Damageable> targets) {
-
+		
 	}
 }
