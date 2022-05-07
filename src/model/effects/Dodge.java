@@ -10,8 +10,7 @@ public class Dodge extends Effect {
 
 	@Override
 	void apply(Champion c) {
-		int rand =(int)(Math.random()*2);
-		if(rand==1);//Unknown'
+		c.getAppliedEffects().add(clone());
 
 
 		int speed = c.getSpeed();
@@ -21,6 +20,8 @@ public class Dodge extends Effect {
 
 	@Override
 	void remove(Champion c) {
+		RemoveEffect("Dodge",c);
+
 		double dom = c.getSpeed()*100*1.05;
 		double nom = 1.05*105;
 		c.setSpeed((int)(dom/nom));

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import model.abilities.Ability;
 import model.effects.Effect;
 
-public abstract class Champion implements Comparable {
+public abstract class Champion implements Comparable,Damageable   {
 
 	private String name;
 	private int mana;
@@ -129,5 +129,6 @@ public abstract class Champion implements Comparable {
 		if (currentActionPoints < 0)
 			this.currentActionPoints = 0;
 	}
+	abstract void useLeaderAbility(ArrayList<Champion> targets);
 
 }

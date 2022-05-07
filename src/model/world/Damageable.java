@@ -4,6 +4,6 @@ import java.awt.*;
 
 public interface Damageable {
     Point getLocation();
-    int getCurrentHp();
-    void setCurrentHp(int hp);
+    int getCurrentHP();
+    void setCurrentHP(int hp);
 }

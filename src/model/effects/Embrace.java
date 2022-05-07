@@ -10,6 +10,7 @@ public class Embrace extends Effect {
 
 	@Override
 	void apply(Champion c) {
+		c.getAppliedEffects().add(clone());
 		c.setSpeed((int)(c.getSpeed()*1.2));
 		c.setCurrentHP((int)(c.getMaxHP()*0.2+c.getCurrentHP()));
 		c.setMana((int)(c.getMana()*1.2));
@@ -18,6 +19,10 @@ public class Embrace extends Effect {
 
 	@Override
 	void remove(Champion c) {
+		RemoveEffect("Embrace",c);
+
+
+
 		double dom = 100*1.2;
 		double nom = 1.2*120;
 		c.setSpeed((int)((c.getSpeed()*dom)/nom));
