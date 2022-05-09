@@ -23,7 +23,10 @@ public class HealingAbility extends Ability {
 	}
 
 	@Override
-	void execute(ArrayList<Damageable> targets) {
+	public void execute(ArrayList<Damageable> targets) {
+		for (Damageable target:targets) {
+			target.setCurrentHP(target.getCurrentHP()+this.healAmount);
 
+		}
 	}
 }

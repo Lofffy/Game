@@ -11,7 +11,7 @@ public class PowerUp extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 		for (int i = 0; i < c.getAbilities().size(); i++) {
 			if(c.getAbilities().get(i)instanceof HealingAbility){
@@ -22,7 +22,7 @@ public class PowerUp extends Effect {
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("PowerUp",c);
 
 		double dom = 100*1.2;

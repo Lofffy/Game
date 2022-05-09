@@ -1,5 +1,7 @@
 package model.world;
 
+import model.effects.Stun;
+
 import java.util.ArrayList;
 
 public class AntiHero extends Champion {
@@ -10,8 +12,11 @@ public class AntiHero extends Champion {
 	}
 
 	@Override
-	void useLeaderAbility(ArrayList<Champion> targets) {
+	public void useLeaderAbility(ArrayList<Champion> targets) {
+		for (Champion target: targets) {
+			new Stun(2).apply(target);
 
+		}
 	}
 
 	@Override

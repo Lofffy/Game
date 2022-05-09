@@ -58,7 +58,7 @@ public abstract class Ability {
 		return castArea;
 	}
 
-	abstract void execute(ArrayList<Damageable> targets);
+	public abstract void execute(ArrayList<Damageable> targets);
 
 
 

@@ -9,13 +9,13 @@ public class Shield extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 		c.setSpeed((int) (c.getSpeed()*1.02));
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("Shield",c);
 		double dom = c.getSpeed()*100*1.02;
 		double nom = 1.02*120;

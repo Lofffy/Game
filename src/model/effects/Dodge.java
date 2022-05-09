@@ -9,7 +9,7 @@ public class Dodge extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 
 
@@ -19,7 +19,7 @@ public class Dodge extends Effect {
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("Dodge",c);
 
 		double dom = c.getSpeed()*100*1.05;

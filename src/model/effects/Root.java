@@ -10,7 +10,7 @@ public class Root extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 		if(!(c.getCondition().equals(Condition.INACTIVE)))
 		c.setCondition(Condition.ROOTED);
@@ -18,7 +18,7 @@ public class Root extends Effect {
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("Root",c);
 
 		if(c.getCondition().equals(Condition.ROOTED))

@@ -129,6 +129,6 @@ public abstract class Champion implements Comparable,Damageable   {
 		if (currentActionPoints < 0)
 			this.currentActionPoints = 0;
 	}
-	abstract void useLeaderAbility(ArrayList<Champion> targets);
+	public abstract void useLeaderAbility(ArrayList<Champion> targets);
 
 }

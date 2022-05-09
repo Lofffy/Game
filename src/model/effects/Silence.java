@@ -15,14 +15,14 @@ public class Silence extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn() + 2);
 		c.setCurrentActionPoints(c.getCurrentActionPoints() + 2);
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("Silence",c);
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn() - 2);
 		c.setCurrentActionPoints(c.getCurrentActionPoints() - 2);

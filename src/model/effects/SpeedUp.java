@@ -9,7 +9,7 @@ public class SpeedUp extends Effect {
 	}
 
 	@Override
-	void apply(Champion c) {
+	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
 		c.setSpeed((int) (c.getSpeed()*1.15));
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()+1);
@@ -17,7 +17,7 @@ public class SpeedUp extends Effect {
 	}
 
 	@Override
-	void remove(Champion c) {
+	public void remove(Champion c) {
 		RemoveEffect("SpeedUp",c);
 		double dom = c.getSpeed()*100*1.15;
 		double nom = 1.15*150;

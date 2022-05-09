@@ -1,5 +1,8 @@
 package model.world;
 
+import model.effects.EffectType;
+import model.effects.Embrace;
+
 import java.util.ArrayList;
 
 public class Hero extends Champion {
@@ -9,9 +12,15 @@ public class Hero extends Champion {
 	}
 
 	@Override
-	void useLeaderAbility(ArrayList<Champion> targets) {
-		for (int i = 0; i < targets.size(); i++) {
-
+	public void useLeaderAbility(ArrayList<Champion> targets) {
+		for (Champion target : targets) {
+			new Embrace(2).apply(target);
+			for (int j = 0; j < target.getAppliedEffects().size(); j++) {
+				if (target.getAppliedEffects().get(j).getType().equals(EffectType.DEBUFF)) {
+					target.getAppliedEffects().remove(j);
+					j--;
+				}
+			}
 		}
 	}
 

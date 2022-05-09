@@ -1,6 +1,7 @@
 package model.abilities;
 
 import model.effects.Effect;
+import model.world.Champion;
 import model.world.Damageable;
 
 import java.lang.annotation.Target;
@@ -21,7 +22,11 @@ public class CrowdControlAbility extends Ability {
 	}
 
 	@Override
-	void execute(ArrayList<Damageable> targets) {
-
+	public void execute(ArrayList<Damageable> targets) {
+		for (Damageable target:targets) {
+			if (target instanceof Champion ) {
+				this.effect.apply((Champion) target);
+			}
+		}
 	}
 }

@@ -210,4 +210,7 @@ public class Game {
 			}
 		}
 	}
+	public Champion getCurrentChampion(){
+
+	}
 }

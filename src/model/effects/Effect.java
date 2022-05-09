@@ -46,7 +46,7 @@ abstract public class Effect implements Cloneable {
 			}
 		}
 	}
-	abstract void apply(Champion c);
-	abstract void remove(Champion c);
+	public abstract void apply(Champion c);
+	public abstract void remove(Champion c);
 
 }
