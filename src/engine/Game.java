@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import exceptions.GameActionException;
+import exceptions.UnallowedMovementException;
 import model.abilities.Ability;
 import model.abilities.AreaOfEffect;
 import model.abilities.CrowdControlAbility;
@@ -37,15 +39,15 @@ public class Game {
 	private final static int BOARDWIDTH = 5;
 	private final static int BOARDHEIGHT = 5;
 
-	public Game(Player p1, Player p2) {
+	public Game() {
 		this.firstLeaderAbilityUsed = false;
 		this.secondLeaderAbilityUsed = false;
-		this.firstPlayer = p1;
-		this.secondPlayer = p2;
+//		this.firstPlayer = p1;
+//		this.secondPlayer = p2;
 		turnOrder = new PriorityQueue(6);
 		board = new Object[BOARDHEIGHT][BOARDWIDTH];
-		placeChampions();
-		placeCovers();
+//		placeChampions();
+//		placeCovers();
 		availableChampions = new ArrayList<Champion>();
 		availableAbilities = new ArrayList<Ability>();
 	}
@@ -206,20 +208,17 @@ public class Game {
 			}
 		}
 	}
-	public Champion getCurrentChampion(){
-		int counter = 0 ;
-		for (int i = 0; i < turnOrder.size(); i++) {
-			if(turnOrder.peekMin() instanceof Champion)
-				counter++;
-		}
-		if(counter<=0){
+
+	public Champion getCurrentChampion() {
+
+		if (turnOrder.size() == 0) {
 			for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
-				if(firstPlayer.getTeam().get(i).getCondition()!= Condition.KNOCKEDOUT)
-				   turnOrder.insert(firstPlayer.getTeam().get(i));
+				if (firstPlayer.getTeam().get(i).getCondition() != Condition.KNOCKEDOUT)
+					turnOrder.insert(firstPlayer.getTeam().get(i));
 			}
 			for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
-				if(secondPlayer.getTeam().get(i).getCondition()!= Condition.KNOCKEDOUT)
-				   turnOrder.insert(secondPlayer.getTeam().get(i));
+				if (secondPlayer.getTeam().get(i).getCondition() != Condition.KNOCKEDOUT)
+					turnOrder.insert(secondPlayer.getTeam().get(i));
 			}
 		}
 		return (Champion) this.turnOrder.peekMin();
@@ -227,40 +226,71 @@ public class Game {
 	}
 
 
-	public Player checkGameOver(){
-		int counter = 0 ;
+	public Player checkGameOver() {
+		int counter = 0;
 		for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
-			if(firstPlayer.getTeam().get(0).getCondition()==Condition.KNOCKEDOUT)
-				counter ++;
-		}
-		if(counter==3)
-			return secondPlayer;
-
-		counter = 0 ;
-
-		for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
-			if(secondPlayer.getTeam().get(0).getCondition()==Condition.KNOCKEDOUT)
+			if (firstPlayer.getTeam().get(0).getCondition() == Condition.KNOCKEDOUT)
 				counter++;
 		}
-		if(counter==3)
+		if (counter == 3)
+			return secondPlayer;
+
+		counter = 0;
+
+		for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
+			if (secondPlayer.getTeam().get(0).getCondition() == Condition.KNOCKEDOUT)
+				counter++;
+		}
+		if (counter == 3)
 			return firstPlayer;
 
 		return null;
 	}
-	public void move(Direction d){
+
+	public void move(Direction d) throws GameActionException {
 		if (d == Direction.UP) {
-			Point p = new Point(getCurrentChampion().getLocation().x+1,getCurrentChampion().getLocation().y);
-			if(board[getCurrentChampion().getLocation().x+1][getCurrentChampion().getLocation().y]==null)
-			     getCurrentChampion().setLocation(p);
-		}else if(d == Direction.DOWN) {
-			Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
-			if(board[getCurrentChampion().getLocation().x - 1][ getCurrentChampion().getLocation().y]==null)
-			    getCurrentChampion().setLocation(p);
-		}else if(d == Direction.LEFT){
-//			int location = getCurrentChampion().getLocation().y-1);
+			Point p = new Point(getCurrentChampion().getLocation().x + 1, getCurrentChampion().getLocation().y);
+			if (board[getCurrentChampion().getLocation().x + 1][getCurrentChampion().getLocation().y] == null&&getCurrentChampion().getCondition()!=Condition.ROOTED)
+				getCurrentChampion().setLocation(p);
+			else
+				throw new UnallowedMovementException("You're not allowed to move there");
+		} else if (d == Direction.DOWN) {
+			if (board[getCurrentChampion().getLocation().x - 1][getCurrentChampion().getLocation().y] == null&& getCurrentChampion().getCondition()!=Condition.ROOTED) {
+				Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
+				getCurrentChampion().setLocation(p);
+			}else
+				throw new UnallowedMovementException("You're not allowed to move there");
+		} else if (d == Direction.LEFT) {
+			if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y-1] == null&& getCurrentChampion().getCondition()!=Condition.ROOTED){
+
+			}
 
 		}
 
+	}
+
+	public static void main(String[] args) {
+		Game g = new Game();
+		Champion c = new AntiHero("Ali", 123, 321, 321, 321, 312, 132);
+		g.turnOrder.insert(c);
+		Champion z = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+		g.turnOrder.insert(z);
+		Champion f = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+		Champion d = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+		Champion s = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+		Champion a = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+
+		g.turnOrder.insert(f);
+		g.turnOrder.insert(d);
+		g.turnOrder.insert(s);
+		g.turnOrder.insert(a);
+		while (g.turnOrder.size() != 0) {
+			if (g.turnOrder.peekMin() instanceof Champion) {
+				System.out.println(g.turnOrder.size());
+				System.out.println(((Champion) g.turnOrder.peekMin()).getName());
+				g.turnOrder.remove();
+			}
+		}
 	}
 
 }
