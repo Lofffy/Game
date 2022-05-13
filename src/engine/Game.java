@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import exceptions.GameActionException;
+import exceptions.NotEnoughResourcesException;
 import exceptions.UnallowedMovementException;
 import model.abilities.Ability;
 import model.abilities.AreaOfEffect;
@@ -39,15 +40,15 @@ public class Game {
 	private final static int BOARDWIDTH = 5;
 	private final static int BOARDHEIGHT = 5;
 
-	public Game() {
+	public Game(Player p1,Player p2) {
 		this.firstLeaderAbilityUsed = false;
 		this.secondLeaderAbilityUsed = false;
-//		this.firstPlayer = p1;
-//		this.secondPlayer = p2;
+ 		this.firstPlayer = p1;
+  	    this.secondPlayer = p2;
 		turnOrder = new PriorityQueue(6);
 		board = new Object[BOARDHEIGHT][BOARDWIDTH];
-//		placeChampions();
-//		placeCovers();
+		placeChampions();
+     	placeCovers();
 		availableChampions = new ArrayList<Champion>();
 		availableAbilities = new ArrayList<Ability>();
 	}
@@ -249,55 +250,72 @@ public class Game {
 
 	public void move(Direction d) throws UnallowedMovementException {
 		if (d == Direction.UP) {
-			Point p = new Point(getCurrentChampion().getLocation().x + 1, getCurrentChampion().getLocation().y);
-			if (board[getCurrentChampion().getLocation().x + 1][getCurrentChampion().getLocation().y] == null&&getCurrentChampion().getCondition()!=Condition.ROOTED)
-				getCurrentChampion().setLocation(p);
-			else
+			if(getCurrentChampion().getLocation().x!=4) {
+				if (board[getCurrentChampion().getLocation().x + 1][getCurrentChampion().getLocation().y] == null && getCurrentChampion().getCondition() != Condition.ROOTED && getCurrentChampion().getCurrentActionPoints() != 0) {
+					Point p = new Point(getCurrentChampion().getLocation().x + 1, getCurrentChampion().getLocation().y);
+					getCurrentChampion().setLocation(p);
+					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+				} else
+					throw new UnallowedMovementException("You're not allowed to move there");
+			}else
 				throw new UnallowedMovementException("You're not allowed to move there");
+
 		} else if (d == Direction.DOWN) {
-			if (board[getCurrentChampion().getLocation().x - 1][getCurrentChampion().getLocation().y] == null&& getCurrentChampion().getCondition()!=Condition.ROOTED) {
-				Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
-				getCurrentChampion().setLocation(p);
+			if (getCurrentChampion().getLocation().x == 0) {
+				if (board[getCurrentChampion().getLocation().x - 1][getCurrentChampion().getLocation().y] == null && getCurrentChampion().getCondition() != Condition.ROOTED && getCurrentChampion().getCurrentActionPoints() != 0) {
+					Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
+					getCurrentChampion().setLocation(p);
+					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+				} else
+					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
 				throw new UnallowedMovementException("You're not allowed to move there");
-		} else if (d == Direction.LEFT) {
-			if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y-1] == null&& getCurrentChampion().getCondition()!=Condition.ROOTED){
-				Point p = new Point(getCurrentChampion().getLocation().x , getCurrentChampion().getLocation().y-1);
-				getCurrentChampion().setLocation(p);
+
+		}else if (d == Direction.LEFT) {
+			if(getCurrentChampion().getLocation().y==0) {
+				if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y - 1] == null && getCurrentChampion().getCondition() != Condition.ROOTED && getCurrentChampion().getCurrentActionPoints() != 0) {
+					Point p = new Point(getCurrentChampion().getLocation().x, getCurrentChampion().getLocation().y - 1);
+					getCurrentChampion().setLocation(p);
+					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+				} else
+					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
 				throw new UnallowedMovementException("You're not allowed to move there");
-		}else if(d== Direction.RIGHT){
-			if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y+1] == null && getCurrentChampion().getCondition()!=Condition.ROOTED){
-				Point p = new Point(getCurrentChampion().getLocation().x , getCurrentChampion().getLocation().y+1);
-				getCurrentChampion().setLocation(p);
+
+		} else if (d == Direction.RIGHT) {
+			if (getCurrentChampion().getLocation().y == 4) {
+				if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y + 1] == null && getCurrentChampion().getCondition() != Condition.ROOTED && getCurrentChampion().getCurrentActionPoints() != 0) {
+					Point p = new Point(getCurrentChampion().getLocation().x, getCurrentChampion().getLocation().y + 1);
+					getCurrentChampion().setLocation(p);
+					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+				} else
+					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
 				throw new UnallowedMovementException("You're not allowed to move there");
 		}
+	}
+	public void attack(Direction d){
 
+	}
+	public void castAbility(Ability a)throws NotEnoughResourcesException{
+		ArrayList<Damageable> target = new ArrayList<>();
+		switch (a.getCastArea()){
+			case SELFTARGET :
+				target.add(getCurrentChampion());
+				if(getCurrentChampion().getMana()>=a.getManaCost())
+				   a.execute(target);
+				else
+					throw new NotEnoughResourcesException("No Mana");
+				break;
+			case SURROUND:
+
+
+
+		}
 	}
 
 	public static void main(String[] args) {
-		Game g = new Game();
-		Champion c = new AntiHero("Ali", 123, 321, 321, 321, 312, 132);
-		g.turnOrder.insert(c);
-//		Champion z = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-//		g.turnOrder.insert(z);
-		Champion f = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-		Champion d = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-		Champion s = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-		Champion a = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-//		g.turnOrder.insert(f);
-//		g.turnOrder.insert(d);
-//		g.turnOrder.insert(s);
-//		g.turnOrder.insert(a);
-		while (g.turnOrder.size() != 0) {
-			System.out.println("hererrere");
-			if (g.turnOrder.peekMin() instanceof Champion) {
-				System.out.println(g.turnOrder.size());
-				System.out.println(((Champion) g.turnOrder.peekMin()).getName());
-				g.turnOrder.remove();
-			}
-		}
+
 	}
 
 }

@@ -13,10 +13,9 @@ public class AntiHero extends Champion {
 
 	@Override
 	public void useLeaderAbility(ArrayList<Champion> targets) {
-		for (Champion target : targets) {
+		for (Champion target : targets)
 			new Stun(2).apply(target);
 
-		}
 	}
 
 	@Override

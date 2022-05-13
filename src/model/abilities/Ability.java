@@ -14,8 +14,7 @@ public abstract class Ability {
 	private int currentCooldown;
 	private AreaOfEffect castArea;
 
-	public Ability(String name, int manaCost, int baseCooldown, int castRange, AreaOfEffect castArea,
-			int actionsRequired) {
+	public Ability(String name, int manaCost, int baseCooldown, int castRange, AreaOfEffect castArea, int actionsRequired) {
 		this.name = name;
 		this.manaCost = manaCost;
 		this.requiredActionPoints = actionsRequired;

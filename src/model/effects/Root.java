@@ -4,6 +4,7 @@ import model.world.Champion;
 import model.world.Condition;
 
 public class Root extends Effect {
+	static boolean isAlreadyRooted  = false;
 
 	public Root(int d) {
 		super("Root", d, EffectType.DEBUFF);
@@ -12,17 +13,20 @@ public class Root extends Effect {
 	@Override
 	public void apply(Champion c) {
 		c.getAppliedEffects().add(clone());
+		if(c.getCondition().equals(Condition.ROOTED))
+			isAlreadyRooted = true;
 		if(!(c.getCondition().equals(Condition.INACTIVE)))
-		c.setCondition(Condition.ROOTED);
+		     c.setCondition(Condition.ROOTED);
 
 	}
 
 	@Override
 	public void remove(Champion c) {
 		RemoveEffect("Root",c);
-
-		if(c.getCondition().equals(Condition.ROOTED))
-			c.setCondition(Condition.ACTIVE);
+		if(!isAlreadyRooted) {
+			if (c.getCondition().equals(Condition.ROOTED))
+				c.setCondition(Condition.ACTIVE);
+		}
 
 
 	}
