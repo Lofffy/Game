@@ -7,13 +7,13 @@ import java.util.ArrayList;
 public class AntiHero extends Champion {
 
 	public AntiHero(String name, int maxHP, int mana, int maxActionsPerTurn, int speed, int attackRange,
-			int attackDamage) {
+					int attackDamage) {
 		super(name, maxHP, mana, maxActionsPerTurn, speed, attackRange, attackDamage);
 	}
 
 	@Override
 	public void useLeaderAbility(ArrayList<Champion> targets) {
-		for (Champion target: targets) {
+		for (Champion target : targets) {
 			new Stun(2).apply(target);
 
 		}
@@ -21,6 +21,6 @@ public class AntiHero extends Champion {
 
 	@Override
 	public int compareTo(Object o) {
-		return 0;
+		 return super.compareTo((Champion) o);
 	}
 }

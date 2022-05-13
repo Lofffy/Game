@@ -26,7 +26,6 @@ public class HealingAbility extends Ability {
 	public void execute(ArrayList<Damageable> targets) {
 		for (Damageable target:targets) {
 			target.setCurrentHP(target.getCurrentHP()+this.healAmount);
-
 		}
 	}
 }

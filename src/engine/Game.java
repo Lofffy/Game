@@ -22,11 +22,7 @@ import model.effects.Shock;
 import model.effects.Silence;
 import model.effects.SpeedUp;
 import model.effects.Stun;
-import model.world.AntiHero;
-import model.world.Champion;
-import model.world.Cover;
-import model.world.Hero;
-import model.world.Villain;
+import model.world.*;
 
 public class Game {
 
@@ -211,6 +207,60 @@ public class Game {
 		}
 	}
 	public Champion getCurrentChampion(){
+		int counter = 0 ;
+		for (int i = 0; i < turnOrder.size(); i++) {
+			if(turnOrder.peekMin() instanceof Champion)
+				counter++;
+		}
+		if(counter<=0){
+			for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
+				if(firstPlayer.getTeam().get(i).getCondition()!= Condition.KNOCKEDOUT)
+				   turnOrder.insert(firstPlayer.getTeam().get(i));
+			}
+			for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
+				if(secondPlayer.getTeam().get(i).getCondition()!= Condition.KNOCKEDOUT)
+				   turnOrder.insert(secondPlayer.getTeam().get(i));
+			}
+		}
+		return (Champion) this.turnOrder.peekMin();
 
 	}
+
+
+	public Player checkGameOver(){
+		int counter = 0 ;
+		for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
+			if(firstPlayer.getTeam().get(0).getCondition()==Condition.KNOCKEDOUT)
+				counter ++;
+		}
+		if(counter==3)
+			return secondPlayer;
+
+		counter = 0 ;
+
+		for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
+			if(secondPlayer.getTeam().get(0).getCondition()==Condition.KNOCKEDOUT)
+				counter++;
+		}
+		if(counter==3)
+			return firstPlayer;
+
+		return null;
+	}
+	public void move(Direction d){
+		if (d == Direction.UP) {
+			Point p = new Point(getCurrentChampion().getLocation().x+1,getCurrentChampion().getLocation().y);
+			if(board[getCurrentChampion().getLocation().x+1][getCurrentChampion().getLocation().y]==null)
+			     getCurrentChampion().setLocation(p);
+		}else if(d == Direction.DOWN) {
+			Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
+			if(board[getCurrentChampion().getLocation().x - 1][ getCurrentChampion().getLocation().y]==null)
+			    getCurrentChampion().setLocation(p);
+		}else if(d == Direction.LEFT){
+//			int location = getCurrentChampion().getLocation().y-1);
+
+		}
+
+	}
+
 }

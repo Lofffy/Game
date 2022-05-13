@@ -17,8 +17,7 @@ public class Villain extends Champion {
 		}
 	}
 
-	@Override
 	public int compareTo(Object o) {
-		return 0;
+		return super.compareTo((Champion) o);
 	}
 }
