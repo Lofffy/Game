@@ -229,7 +229,7 @@ public class Game {
 	public Player checkGameOver() {
 		int counter = 0;
 		for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
-			if (firstPlayer.getTeam().get(0).getCondition() == Condition.KNOCKEDOUT)
+			if (firstPlayer.getTeam().get(i).getCondition() == Condition.KNOCKEDOUT)
 				counter++;
 		}
 		if (counter == 3)
@@ -238,7 +238,7 @@ public class Game {
 		counter = 0;
 
 		for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
-			if (secondPlayer.getTeam().get(0).getCondition() == Condition.KNOCKEDOUT)
+			if (secondPlayer.getTeam().get(i).getCondition() == Condition.KNOCKEDOUT)
 				counter++;
 		}
 		if (counter == 3)
@@ -247,7 +247,7 @@ public class Game {
 		return null;
 	}
 
-	public void move(Direction d) throws GameActionException {
+	public void move(Direction d) throws UnallowedMovementException {
 		if (d == Direction.UP) {
 			Point p = new Point(getCurrentChampion().getLocation().x + 1, getCurrentChampion().getLocation().y);
 			if (board[getCurrentChampion().getLocation().x + 1][getCurrentChampion().getLocation().y] == null&&getCurrentChampion().getCondition()!=Condition.ROOTED)
@@ -262,9 +262,16 @@ public class Game {
 				throw new UnallowedMovementException("You're not allowed to move there");
 		} else if (d == Direction.LEFT) {
 			if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y-1] == null&& getCurrentChampion().getCondition()!=Condition.ROOTED){
-
-			}
-
+				Point p = new Point(getCurrentChampion().getLocation().x , getCurrentChampion().getLocation().y-1);
+				getCurrentChampion().setLocation(p);
+			}else
+				throw new UnallowedMovementException("You're not allowed to move there");
+		}else if(d== Direction.RIGHT){
+			if (board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y+1] == null && getCurrentChampion().getCondition()!=Condition.ROOTED){
+				Point p = new Point(getCurrentChampion().getLocation().x , getCurrentChampion().getLocation().y+1);
+				getCurrentChampion().setLocation(p);
+			}else
+				throw new UnallowedMovementException("You're not allowed to move there");
 		}
 
 	}
@@ -273,18 +280,18 @@ public class Game {
 		Game g = new Game();
 		Champion c = new AntiHero("Ali", 123, 321, 321, 321, 312, 132);
 		g.turnOrder.insert(c);
-		Champion z = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-		g.turnOrder.insert(z);
+//		Champion z = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
+//		g.turnOrder.insert(z);
 		Champion f = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
 		Champion d = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
 		Champion s = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
 		Champion a = new AntiHero("zezo", 123, 321, 221, 400, 312, 132);
-
-		g.turnOrder.insert(f);
-		g.turnOrder.insert(d);
-		g.turnOrder.insert(s);
-		g.turnOrder.insert(a);
+//		g.turnOrder.insert(f);
+//		g.turnOrder.insert(d);
+//		g.turnOrder.insert(s);
+//		g.turnOrder.insert(a);
 		while (g.turnOrder.size() != 0) {
+			System.out.println("hererrere");
 			if (g.turnOrder.peekMin() instanceof Champion) {
 				System.out.println(g.turnOrder.size());
 				System.out.println(((Champion) g.turnOrder.peekMin()).getName());
