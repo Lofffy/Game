@@ -9,7 +9,7 @@ public class SpeedUp extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		c.setSpeed((int) (c.getSpeed()*1.15));
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()+1);

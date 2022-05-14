@@ -15,7 +15,7 @@ public class Silence extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn() + 2);
 		c.setCurrentActionPoints(c.getCurrentActionPoints() + 2);

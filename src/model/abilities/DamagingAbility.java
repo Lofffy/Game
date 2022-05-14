@@ -1,5 +1,6 @@
 package model.abilities;
 
+import model.world.Champion;
 import model.world.Damageable;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class DamagingAbility extends Ability {
 	@Override
 	public void execute(ArrayList<Damageable> targets) {
 		for (Damageable target:targets) {
-		target.setCurrentHP(target.getCurrentHP()-this.damageAmount);
+			target.setCurrentHP(target.getCurrentHP()-this.damageAmount);
 		}
+		setCurrentCooldown(getBaseCooldown());
 	}
 }

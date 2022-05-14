@@ -12,7 +12,7 @@ public class Disarm extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		DamagingAbility Punch = new DamagingAbility("Punch",0,1,1,AreaOfEffect.SINGLETARGET,1,50);
 		c.getAbilities().add(Punch);

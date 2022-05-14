@@ -9,7 +9,7 @@ public class Embrace extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		c.setSpeed((int)(c.getSpeed()*1.2));
 		c.setCurrentHP((int)(c.getMaxHP()*0.2+c.getCurrentHP()));

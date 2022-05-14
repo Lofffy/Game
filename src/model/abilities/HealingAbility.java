@@ -1,5 +1,6 @@
 package model.abilities;
 
+import model.world.Champion;
 import model.world.Damageable;
 
 import java.util.ArrayList;
@@ -27,5 +28,6 @@ public class HealingAbility extends Ability {
 		for (Damageable target:targets) {
 			target.setCurrentHP(target.getCurrentHP()+this.healAmount);
 		}
+		setCurrentCooldown(getBaseCooldown());
 	}
 }

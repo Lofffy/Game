@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import exceptions.GameActionException;
+import exceptions.InvalidTargetException;
 import exceptions.NotEnoughResourcesException;
 import exceptions.UnallowedMovementException;
 import model.abilities.Ability;
@@ -14,18 +15,10 @@ import model.abilities.AreaOfEffect;
 import model.abilities.CrowdControlAbility;
 import model.abilities.DamagingAbility;
 import model.abilities.HealingAbility;
-import model.effects.Disarm;
-import model.effects.Dodge;
-import model.effects.Effect;
-import model.effects.Embrace;
-import model.effects.PowerUp;
-import model.effects.Root;
-import model.effects.Shield;
-import model.effects.Shock;
-import model.effects.Silence;
-import model.effects.SpeedUp;
-import model.effects.Stun;
+import model.effects.*;
 import model.world.*;
+
+import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 public class Game {
 
@@ -255,6 +248,7 @@ public class Game {
 					Point p = new Point(getCurrentChampion().getLocation().x + 1, getCurrentChampion().getLocation().y);
 					getCurrentChampion().setLocation(p);
 					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+					board[getCurrentChampion().getLocation().x + 1][getCurrentChampion().getLocation().y] = getCurrentChampion();
 				} else
 					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
@@ -266,6 +260,7 @@ public class Game {
 					Point p = new Point(getCurrentChampion().getLocation().x - 1, getCurrentChampion().getLocation().y);
 					getCurrentChampion().setLocation(p);
 					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+					board[getCurrentChampion().getLocation().x - 1][getCurrentChampion().getLocation().y] = getCurrentChampion();
 				} else
 					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
@@ -277,6 +272,7 @@ public class Game {
 					Point p = new Point(getCurrentChampion().getLocation().x, getCurrentChampion().getLocation().y - 1);
 					getCurrentChampion().setLocation(p);
 					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+					board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y - 1] = getCurrentChampion();
 				} else
 					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
@@ -288,6 +284,7 @@ public class Game {
 					Point p = new Point(getCurrentChampion().getLocation().x, getCurrentChampion().getLocation().y + 1);
 					getCurrentChampion().setLocation(p);
 					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - 1);
+					board[getCurrentChampion().getLocation().x][getCurrentChampion().getLocation().y + 1] = getCurrentChampion();
 				} else
 					throw new UnallowedMovementException("You're not allowed to move there");
 			}else
@@ -297,23 +294,143 @@ public class Game {
 	public void attack(Direction d){
 
 	}
-	public void castAbility(Ability a)throws NotEnoughResourcesException{
+	public void castAbility(Ability a) throws NotEnoughResourcesException, InvalidTargetException, CloneNotSupportedException {
+		if (a.getManaCost() <= getCurrentChampion().getMana() && a.getRequiredActionPoints() <= getCurrentChampion().getCurrentActionPoints() && a.getBaseCooldown() == 0) {
+			for (int i = 0; i < getCurrentChampion().getAppliedEffects().size(); i++) {
+				if (getCurrentChampion().getAppliedEffects().get(i).getName().equals("Silence"))
+					return;
+			}
+		} else
+			throw new NotEnoughResourcesException();
+
 		ArrayList<Damageable> target = new ArrayList<>();
-		switch (a.getCastArea()){
-			case SELFTARGET :
+
+		switch (a.getCastArea()) {
+			case SELFTARGET -> {
 				target.add(getCurrentChampion());
-				if(getCurrentChampion().getMana()>=a.getManaCost())
-				   a.execute(target);
-				else
-					throw new NotEnoughResourcesException("No Mana");
-				break;
-			case SURROUND:
-
-
-
+				a.execute(target);
+				getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
+				getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints() - a.getRequiredActionPoints());
+			}
+			case SURROUND -> {
+				target = validTarget(getCurrentChampion());
+				if(target.size()==0)
+					throw new InvalidTargetException();
+				if (a instanceof DamagingAbility) {
+					a.execute(target);
+				}
+				if (a instanceof CrowdControlAbility) {
+					for (int i = 0; i < target.size(); i++) {
+						if (target.get(i) instanceof Cover) {
+							target.remove(i);
+							i--;
+						}
+					}
+					if(target.size()==0)
+						throw  new InvalidTargetException();
+					a.execute(target);
+				}
+				if (a instanceof HealingAbility) {
+					for (int i = 0; i < target.size(); i++) {
+						if (target.get(i) instanceof Cover) {
+							target.remove(i);
+							i--;
+						}
+					}
+					a.execute(target);
+				}
+			}
+			case TEAMTARGET ->
+					{
+				if (a instanceof DamagingAbility)
+				{
+					if (firstPlayer.getTeam().contains(getCurrentChampion())) {
+						target.addAll(secondPlayer.getTeam());
+					} else
+						target.addAll(firstPlayer.getTeam());
+				} else if (a instanceof HealingAbility)
+				{
+					if (firstPlayer.getTeam().contains(getCurrentChampion()))
+					{
+						target.addAll(firstPlayer.getTeam());
+					} else
+						target.addAll(secondPlayer.getTeam());
+				} else
+				{
+					if (((CrowdControlAbility) a).getEffect().getType().equals(EffectType.BUFF))
+					{
+						if (firstPlayer.getTeam().contains(getCurrentChampion()))
+						{
+							target.addAll(firstPlayer.getTeam());
+						} else
+							target.addAll(secondPlayer.getTeam());
+					} else
+					{
+						if (firstPlayer.getTeam().contains(getCurrentChampion()))
+						{
+							target.addAll(secondPlayer.getTeam());
+						} else
+							target.addAll(firstPlayer.getTeam());
+					}
+				}
+			}
 		}
 	}
+	public ArrayList<Damageable> validTarget(Champion champion) {
+		ArrayList<Damageable> validT = new ArrayList<>();
+		for (int i = 0; i < getBoardheight(); i++) {
+			for (int j = 0; j < getBoardwidth(); j++) {
+				if (Math.abs(champion.getLocation().x - i) == 1 && Math.abs(champion.getLocation().y - j) == 1 && getBoard()[i][j]!=null)
+					validT.add((Damageable) getBoard()[i][j]);
+				if (Math.abs(champion.getLocation().x - i) == 1 && Math.abs(champion.getLocation().y - j) == 0 && getBoard()[i][j]!=null)
+					validT.add((Damageable) getBoard()[i][j]);
+				if (Math.abs(champion.getLocation().x - i) == 0 && Math.abs(champion.getLocation().y - j) == 1 && getBoard()[i][j]!=null)
+					validT.add((Damageable) getBoard()[i][j]);
+			}
+		}
+		return validT;
+	}
 
+	public void castAbility(Direction d,Ability a ) throws NotEnoughResourcesException, InvalidTargetException {
+		if (a.getManaCost() <= getCurrentChampion().getMana() && a.getRequiredActionPoints() <= getCurrentChampion().getCurrentActionPoints() && a.getCurrentCooldown() == 0) {
+			for (int i = 0; i < getCurrentChampion().getAppliedEffects().size(); i++) {
+				if (getCurrentChampion().getAppliedEffects().get(i).getName().equals("Silence"))
+					return;
+			}
+		} else
+			throw new NotEnoughResourcesException();
+
+		ArrayList<Damageable> target = new ArrayList<>();
+		switch (d) {
+			case UP -> {
+				if (a instanceof DamagingAbility) {
+					for (int i = 1; i <= a.getCastRange(); i++) {
+						if (getCurrentChampion().getLocation().x + i < getBoardheight()) {
+							if (getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y] instanceof Champion) {
+								if (firstPlayer.getTeam().contains(getCurrentChampion())) {
+									if (!(firstPlayer.getTeam().contains((Champion) getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y]))) {
+										target.add((Damageable) getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y]);
+									} else
+										continue;
+								} else if (!(secondPlayer.getTeam().contains((Champion) getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y]))) {
+									target.add((Damageable) getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y]);
+								} else
+									continue;
+
+							} else
+								target.add((Damageable) getBoard()[getCurrentChampion().getLocation().x + i][getCurrentChampion().getLocation().y]);
+						}else
+							throw new InvalidTargetException();
+					}
+				}else if(a instanceof HealingAbility){
+
+				}
+			}
+		}
+	}
+	public boolean myTeam(){
+		return firstPlayer.getTeam().contains(getCurrentChampion());
+	}
 	public static void main(String[] args) {
 
 	}

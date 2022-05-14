@@ -11,7 +11,7 @@ public class Root extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		if(c.getCondition().equals(Condition.ROOTED))
 			isAlreadyRooted = true;

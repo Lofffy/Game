@@ -129,7 +129,7 @@ public abstract class Champion implements Damageable, Comparable  {
 		if (currentActionPoints < 0)
 			this.currentActionPoints = 0;
 	}
-	public abstract void useLeaderAbility(ArrayList<Champion> targets);
+	public abstract void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException;
 	public int compareTo(Champion c){
 		if(c.getSpeed()>this.getSpeed())
 			return 1 ;

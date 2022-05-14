@@ -12,7 +12,7 @@ public class AntiHero extends Champion {
 	}
 
 	@Override
-	public void useLeaderAbility(ArrayList<Champion> targets) {
+	public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException {
 		for (Champion target : targets)
 			new Stun(2).apply(target);
 

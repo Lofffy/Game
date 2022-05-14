@@ -11,7 +11,7 @@ public class PowerUp extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) {
+	public void apply(Champion c) throws CloneNotSupportedException {
 		c.getAppliedEffects().add(clone());
 		for (int i = 0; i < c.getAbilities().size(); i++) {
 			if(c.getAbilities().get(i)instanceof HealingAbility){

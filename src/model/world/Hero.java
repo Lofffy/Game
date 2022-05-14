@@ -12,7 +12,7 @@ public class Hero extends Champion {
 	}
 
 	@Override
-	public void useLeaderAbility(ArrayList<Champion> targets) {
+	public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException {
 		for (Champion target : targets) {
 			new Embrace(2).apply(target);
 			for (int j = 0; j < target.getAppliedEffects().size(); j++) {
