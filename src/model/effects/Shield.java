@@ -9,8 +9,8 @@ public class Shield extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) throws CloneNotSupportedException {
-		c.getAppliedEffects().add(clone());
+	public void apply(Champion c) {
+
 		c.setSpeed((int) (c.getSpeed()*1.02));
 	}
 

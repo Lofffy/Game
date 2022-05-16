@@ -31,8 +31,8 @@ abstract public class Effect implements Cloneable {
 	}
 
 	@Override
-	public Effect clone() throws CloneNotSupportedException {
-			return (Effect) super.clone();
+	public Object clone() throws CloneNotSupportedException {
+			return  super.clone();
 
 	}
 	public static void RemoveEffect(String name, Champion c){

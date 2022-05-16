@@ -9,9 +9,7 @@ public class Dodge extends Effect {
 	}
 
 	@Override
-	public void apply(Champion c) throws CloneNotSupportedException {
-		c.getAppliedEffects().add(clone());
-
+	public void apply(Champion c) {
 
 		int speed = c.getSpeed();
 		int pre = (int)(speed*(5.00/100.00));
