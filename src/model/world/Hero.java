@@ -1,5 +1,6 @@
 package model.world;
 
+import model.effects.Effect;
 import model.effects.EffectType;
 import model.effects.Embrace;
 
@@ -14,13 +15,15 @@ public class Hero extends Champion {
 	@Override
 	public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException {
 		for (Champion target : targets) {
-			new Embrace(2).apply(target);
+			Embrace e = new Embrace(2);
+			e.apply(target);
 			for (int j = 0; j < target.getAppliedEffects().size(); j++) {
 				if (target.getAppliedEffects().get(j).getType().equals(EffectType.DEBUFF)) {
-					target.getAppliedEffects().remove(j);
+					target.getAppliedEffects().get(j).remove(target);
 					j--;
 				}
 			}
+			target.getAppliedEffects().add((Effect) new Embrace(2).clone());
 		}
 	}
 	public int compareTo(Object o) {
