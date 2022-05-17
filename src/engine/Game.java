@@ -23,7 +23,7 @@ public class Game {
 	private Player firstPlayer;
 	private Player secondPlayer;
 	private boolean firstLeaderAbilityUsed;
-	private boolean secondLeaderAbilityUsed;
+	private boolean secondLeaderAbilityUsed ;
 	private Object[][] board;
 	private PriorityQueue turnOrder;
 	private static ArrayList<Champion> availableChampions;
@@ -287,8 +287,10 @@ public class Game {
 				throw new ChampionDisarmedException();
 			else if (getCurrentChampion().getAppliedEffects().get(i) instanceof Dodge) {
 				check = (int) (Math.random() * 2);
-				if (check == 1)
+				if (check == 1) {
+					getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()-2);
 					return;
+				}
 			}
 		}
 
@@ -309,7 +311,7 @@ public class Game {
 								target.setCurrentHP(target.getCurrentHP() - getCurrentChampion().getAttackDamage());
 								checkCondition(target);
 							} else {
-								target.setCurrentHP((int) (target.getCurrentHP() - ((int) (getCurrentChampion().getAttackDamage() * 1.5))));
+								target.setCurrentHP((target.getCurrentHP() - ((int) (getCurrentChampion().getAttackDamage() * 1.5))));
 								checkCondition(target);
 							}
 						} else if (getCurrentChampion() instanceof Villain) {
@@ -446,6 +448,10 @@ public class Game {
 			if (target.getCurrentHP() == 0) {
 				((Champion) target).setCondition(Condition.KNOCKEDOUT);
 				getBoard()[target.getLocation().x][target.getLocation().y] = null;
+				if(firstPlayer.getTeam().contains((Champion) target))
+					firstPlayer.getTeam().remove(target);
+				else
+					secondPlayer.getTeam().remove((Champion) target);
 			}
 		}else if (target.getCurrentHP() == 0)
 			getBoard()[target.getLocation().x][target.getLocation().y] = null;
@@ -829,9 +835,10 @@ public class Game {
 				checkTeamSame(getCurrentChampion(),target);
 			}else if(((CrowdControlAbility)a).getEffect().getType().equals(EffectType.DEBUFF)){
 				target.add((Damageable) getBoard()[x][y]);
-				checkTeamEnemy(getCurrentChampion(), target);
 				if(target.get(0) instanceof Cover)
 					target.remove(0);
+				checkTeamEnemy(getCurrentChampion(), target);
+
 			}else {
 				target.add((Damageable) getBoard()[x][y]);
 				checkTeamSame(getCurrentChampion(), target);
@@ -917,16 +924,10 @@ public class Game {
 		if (!firstLeaderAbilityUsed) {
 			if (getCurrentChampion().equals(firstPlayer.getLeader())) {
 				if (getCurrentChampion() instanceof Hero) {
-					for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
-						if(!firstPlayer.getTeam().get(i).getCondition().equals(Condition.KNOCKEDOUT))
-							targets.add(firstPlayer.getTeam().get(i));
-					}
+					targets.addAll(firstPlayer.getTeam());
 				}
 				if (getCurrentChampion() instanceof Villain){
-					for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
-						if(!secondPlayer.getTeam().get(i).getCondition().equals(Condition.KNOCKEDOUT))
-							targets.add(targets.get(i));
-					}
+					targets.addAll(secondPlayer.getTeam());
 				}
 				else
 					targets = AntiHeroCheck(firstPlayer, secondPlayer);
@@ -941,19 +942,14 @@ public class Game {
 		if (!secondLeaderAbilityUsed) {
 			if (getCurrentChampion().equals(secondPlayer.getLeader())) {
 				if (getCurrentChampion() instanceof Hero){
-					for (int i = 0; i < secondPlayer.getTeam().size(); i++) {
-						if(!secondPlayer.getTeam().get(i).getCondition().equals(Condition.KNOCKEDOUT))
-							targets.add(targets.get(i));
-					}
+					targets.addAll(secondPlayer.getTeam());
 				}
 				if (getCurrentChampion() instanceof Villain) {
-					for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
-						if (!firstPlayer.getTeam().get(i).getCondition().equals(Condition.KNOCKEDOUT))
-							targets.add(targets.get(i));
-					}
+					targets.addAll(firstPlayer.getTeam());
 				}
 				else
 					targets = AntiHeroCheck(firstPlayer, secondPlayer);
+
 				getCurrentChampion().useLeaderAbility(targets);
 				secondLeaderAbilityUsed = true;
 
@@ -962,8 +958,32 @@ public class Game {
 		} else
 			throw new LeaderAbilityAlreadyUsedException();
 	}
+	public void endTurnHelp(Player firstPlayer){
+		for (int i = 0; i < firstPlayer.getTeam().size(); i++) {
+			for (int j = 0; j < firstPlayer.getTeam().get(i).getAppliedEffects().size(); j++) {
+				firstPlayer.getTeam().get(i).getAppliedEffects().get(j).setDuration(firstPlayer.getTeam().get(i).getAppliedEffects().get(i).getDuration()-1);
+				if(firstPlayer.getTeam().get(i).getAppliedEffects().get(j).getDuration()==0) {
+					firstPlayer.getTeam().get(i).getAppliedEffects().get(j).remove(firstPlayer.getTeam().get(i));
+					j--;
+				}
+			}
+			for (int j = 0; j < firstPlayer.getTeam().get(i).getAbilities().size(); j++) {
+				if(firstPlayer.getTeam().get(i).getAbilities().get(j).getCurrentCooldown()>0){
+					firstPlayer.getTeam().get(i).getAbilities().get(j).setCurrentCooldown(firstPlayer.getTeam().get(i).getAbilities().get(j).getCurrentCooldown()-1);
+				}
+			}
+		}
+	}
 	public void endTurn(){
-
+		if(turnOrder.isEmpty())
+			prepareChampionTurns();
+		else {
+			endTurnHelp(firstPlayer);
+			endTurnHelp(secondPlayer);
+			turnOrder.remove();
+			if(getCurrentChampion().getCondition().equals(Condition.INACTIVE))
+				endTurn();
+		}
 	}
 	private void prepareChampionTurns(){
 		if(turnOrder.isEmpty()){
