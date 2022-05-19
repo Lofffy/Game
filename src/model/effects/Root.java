@@ -13,21 +13,18 @@ public class Root extends Effect {
 	@Override
 	public void apply(Champion c) {
 
-		if(c.getCondition().equals(Condition.ROOTED))
-			isAlreadyRooted = true;
 		if(!(c.getCondition().equals(Condition.INACTIVE)))
-		     c.setCondition(Condition.ROOTED);
-
+			c.setCondition(Condition.ROOTED);
 	}
 
 	@Override
 	public void remove(Champion c) {
-		RemoveEffect("Root",c);
-		if(!isAlreadyRooted) {
-			if (c.getCondition().equals(Condition.ROOTED))
-				c.setCondition(Condition.ACTIVE);
-		}
-
-
+		RemoveEffect("Root", c);
+		if (c.getCondition().equals(Condition.INACTIVE))
+			c.setCondition(Condition.INACTIVE);
+		else if (c.getCondition().equals(Condition.ROOTED))
+			c.setCondition(Condition.ROOTED);
+		else
+			c.setCondition(Condition.ACTIVE);
 	}
 }
